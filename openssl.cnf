@@ -1,0 +1,48 @@
+# Import the email address.
+# subjectAltName=email:copy
+# An alternative to produce certificates that aren't
+# deprecated according to PKIX.
+# subjectAltName=email:move
+
+# Copy subject details
+# issuerAltName=issuer:copy
+
+#nsCaRevocationUrl              = http://www.domain.dom/ca-crl.pem
+#nsBaseUrl
+#nsRevocationUrl
+#nsRenewalUrl
+#nsCaPolicyUrl
+#nsSslServerName
+
+# This really needs to be in place for it to be a proxy certificate.
+proxyCertInfo=critical,language:id-ppl-anyLanguage,pathlen:3,policy:foo
+
+####################################################################
+[ tsa ]
+
+default_tsa = tsa_config1       # the default TSA section
+
+[ tsa_config1 ]
+
+# These are used by the TSA reply generation only.
+dir             = ./demoCA              # TSA root directory
+serial          = $dir/tsaserial        # The current serial number (mandatory)
+crypto_device   = builtin               # OpenSSL engine to use for signing
+signer_cert     = $dir/tsacert.pem      # The TSA signing certificate
+                                        # (optional)
+certs           = $dir/cacert.pem       # Certificate chain to include in reply
+                                        # (optional)
+signer_key      = $dir/private/tsakey.pem # The TSA private key (optional)
+
+default_policy  = tsa_policy1           # Policy if request did not specify it
+                                        # (optional)
+other_policies  = tsa_policy2, tsa_policy3      # acceptable policies (optional)
+digests         = sha1, sha256, sha384, sha512  # Acceptable message digests (mandatory)
+accuracy        = secs:1, millisecs:500, microsecs:100  # (optional)
+clock_precision_digits  = 0     # number of digits after dot. (optional)
+ordering                = yes   # Is ordering defined for timestamps?
+                                # (optional, default: no)
+tsa_name                = yes   # Must the TSA name be included in the reply?
+                                # (optional, default: no)
+ess_cert_id_chain       = no    # Must the ESS cert id chain be included?
+                                # (optional, default: no)
