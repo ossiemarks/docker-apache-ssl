@@ -45,9 +45,6 @@ else
   echo ">> HSTS Headers disabled"
 fi
 
- echo ">> Copying client certs to /tmp"
-cp /u01/app/myCA/certs/rootCA.crt /u01/app/myCA/certs/clientcert.p12 /var/www/
-
 
 echo ">> copy /etc/apache2/external/*.conf files to /etc/apache2/sites-enabled/"
 cp /etc/apache2/external/*.conf /etc/apache2/sites-enabled/ 2> /dev/null > /dev/null

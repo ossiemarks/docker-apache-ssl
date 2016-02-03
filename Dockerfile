@@ -1,9 +1,10 @@
 #Will setup apache with SSL and a secure mutual Auth Dir
 
 FROM ubuntu:14.04
-MAINTAINER MarvAmBass
+MAINTAINER ossiemarks
 
 ENV LANG C.UTF-8
+VOLUME /home/osman/ssl_server
 
 RUN apt-get update; apt-get install -y \
     apache2 \
@@ -45,6 +46,7 @@ RUN mkdir -p /u01/app/myCA/certs; \
 mkdir /u01/app/myCA/csr; \
 mkdir /u01/app/myCA/newcerts; \
 mkdir /u01/app/myCA/private; \
+mkdir -p /var/www/html/secure; \
 cp /etc/openssl/openssl.cnf /u01/app/myCA/.
 
 WORKDIR /u01/app/myCA 
@@ -66,6 +68,9 @@ openssl rsa -passin pass:qwerty -in private/client.key -out private/client.key; 
 openssl req -config openssl.cnf -new -subj '/C=DK/L=Aarhus/O=mariocart/CN=theClient' -key private/client.key -out csr/client.csr; \
 openssl ca -batch -config openssl.cnf -days 999 -in csr/client.csr -out certs/client.crt -keyfile private/rootCA.key -cert certs/rootCA.crt -policy policy_anything; \
 openssl pkcs12 -export -passout pass:qwerty -in certs/client.crt -inkey private/client.key -certfile certs/rootCA.crt -out certs/clientcert.p12 
+
+RUN  echo ">> Copying client certs to /var/"; \
+cp /u01/app/myCA/certs/rootCA.crt /u01/app/myCA/certs/clientcert.p12 /var/
 
 RUN chmod a+x /opt/entrypoint.sh
 
