@@ -4,9 +4,9 @@ FROM ubuntu:14.04
 MAINTAINER ossiemarks
 
 ENV LANG C.UTF-8
-VOLUME /home/osman/ssl_server
 
-RUN apt-get update; apt-get install -y \
+#RUN apt-get update; apt-get install -y \
+RUN apt-get install -y \
     apache2 \
     bash \
     openssl
@@ -58,7 +58,7 @@ touch index.txt
 
 RUN openssl genrsa -des3 -passout pass:qwerty -out  private/rootCA.key 2048; \
 openssl rsa -passin pass:qwerty -in private/rootCA.key -out private/rootCA.key; \
-openssl req -config openssl.cnf -new -x509 -subj '/C=DK/L=Aarhus/O=mariocart CA/CN=apache-ssl' -days 999 -key private/rootCA.key -out certs/rootCA.crt; \
+openssl req -config openssl.cnf -new -x509 -subj '/C=DK/L=Aarhus/O=mariocart CA/CN=winterfell' -days 999 -key private/rootCA.key -out certs/rootCA.crt; \
 openssl genrsa -des3 -passout pass:qwerty -out private/winterfell.key 2048; \
 openssl rsa -passin pass:qwerty -in private/winterfell.key -out private/winterfell.key; \
 openssl req -config openssl.cnf -new -subj '/C=DK/L=Aarhus/O=mariocart/CN=winterfell' -key private/winterfell.key -out csr/winterfell.csr; \
