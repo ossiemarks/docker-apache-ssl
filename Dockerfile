@@ -8,6 +8,8 @@ ENV LANG C.UTF-8
 #RUN apt-get update; apt-get install -y \
 RUN apt-get install -y \
     apache2 \
+    php5 \
+    libapache2-mod-php5 \
     bash \
     openssl
 
@@ -28,12 +30,14 @@ RUN sed -i 's/^ServerSignature/#ServerSignature/g' /etc/apache2/conf-enabled/sec
     echo " modified openssl.cnf"; \
     a2enmod ssl; \
     a2enmod headers; \
+    a2enmod proxy_http; \	
     echo "SSLProtocol ALL -SSLv2 -SSLv3" >> /etc/apache2/apache2.conf
 
 ADD 000-default.conf /etc/apache2/sites-enabled/000-default.conf
 ADD 001-default-ssl.conf /etc/apache2/sites-enabled/001-default-ssl.conf
 ADD openssl.cnf /etc/openssl/openssl.cnf
 ADD index.html /var/www/html/secure/index.html
+ADD index.php /var/www/html/secure/php/index.php
 
 EXPOSE 80
 EXPOSE 443
@@ -46,13 +50,13 @@ RUN mkdir -p /u01/app/myCA/certs; \
 mkdir /u01/app/myCA/csr; \
 mkdir /u01/app/myCA/newcerts; \
 mkdir /u01/app/myCA/private; \
-mkdir -p /var/www/html/secure; \
+mkdir -p /var/www/html/secure/php/; \
 cp /etc/openssl/openssl.cnf /u01/app/myCA/.
 
 WORKDIR /u01/app/myCA 
 
-RUN echo 00 > serial ;\
-echo 00 > crlnumber ;\
+RUN echo 05 > serial ;\
+echo 05 > crlnumber ;\
 touch index.txt
 
 
