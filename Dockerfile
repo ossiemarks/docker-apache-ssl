@@ -11,8 +11,8 @@ RUN apt-get install -y \
     php5 \
     libapache2-mod-php5 \
     bash \
-    mysql-server \
-    mysql-client \
+    #mysql-server \
+    #mysql-client \
     openssl
 
 RUN rm -rf /var/www/html/*; rm -rf /etc/apache2/sites-enabled/*; \
