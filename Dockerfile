@@ -11,6 +11,8 @@ RUN apt-get install -y \
     php5 \
     libapache2-mod-php5 \
     bash \
+    mysql-server \
+    mysql-client \
     openssl
 
 RUN rm -rf /var/www/html/*; rm -rf /etc/apache2/sites-enabled/*; \
@@ -38,6 +40,11 @@ ADD 001-default-ssl.conf /etc/apache2/sites-enabled/001-default-ssl.conf
 ADD openssl.cnf /etc/openssl/openssl.cnf
 ADD index.html /var/www/html/secure/index.html
 ADD index.php /var/www/html/secure/php/index.php
+ADD login.php /var/www/html/secure/php/login.php
+ADD session.php /var/www/html/secure/php/session.php
+ADD logout.php /var/www/html/secure/php/logout.php
+ADD style.css /var/www/html/secure/php/style.css
+ADD profile.php /var/www/html/secure/php/profile.php
 
 EXPOSE 80
 EXPOSE 443
