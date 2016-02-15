@@ -1,33 +1,62 @@
 #!/bin/bash
 
 cat <<EOF
-Welcome to the marvambass/apache2-ssl-secure container
-If you want to add your own VirtualHosts Configuration, you can copy the following SSL Configuration Stuff
-	SSLEngine On
+<VirtualHost *:443>
+	DocumentRoot /var/www/html
 
-	SSLProtocol all -SSLv2 -SSLv3
-	# disable ssl compression
-	SSLCompression Off
-	# set HSTS Header
-	#Header add Strict-Transport-Security "max-age=31536000" # just this domain
-	#Header add Strict-Transport-Security "max-age=31536000; includeSubdomains" # with subdomains
-	# Ciphers
-	SSLCipherSuite ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4
-	SSLHonorCipherOrder on
+        SSLEngine On
 
-	<Directory "/var/www/html/secure/">
+        SSLProtocol all -SSLv2 -SSLv3
+        # disable ssl compression
+        SSLCompression Off
+        # set HSTS Header
+        #Header add Strict-Transport-Security "max-age=31536000" # just this domain
+        #Header add Strict-Transport-Security "max-age=31536000; includeSubdomains" # with subdomains
+        # Ciphers
+        SSLCipherSuite ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4
+        SSLHonorCipherOrder on
 	SSLCertificateFile /u01/app/myCA/certs/winterfell.crt
-	SSLCertificateKeyFile /u01/app/myCA/private/winterfell.key
-	SSLCertificateChainFile /u01/app/myCA/certs/rootCA.crt
-	SSLCACertificateFile /u01/app/myCA/certs/rootCA.crt
-	SSLVerifyClient require
-	SSLVerifyDepth  10
-	</Directory>
-	<IfModule mod_ssl.c>
-	    ErrorLog /var/log/apache2/ssl_engine.log
-	    LogLevel debug
-	  </IfModule>
+        SSLCertificateKeyFile /u01/app/myCA/private/winterfell.key
+        SSLCertificateChainFile /u01/app/myCA/certs/rootCA.crt
+        SSLCACertificateFile /u01/app/myCA/certs/rootCA.crt
+        SSLVerifyClient optional
+        SSLVerifyDepth  10
 
+   <Directory "/var/www/html/secure/">
+        Require ssl-verify-client
+        SSLRequireSSL
+        SSLOptions +FakeBasicAuth +StrictRequire
+	#You probably want to check the issuer and the cn name and other elements of the cert
+        SSLRequire %{SSL_CIPHER_USEKEYSIZE} >= 128
+SSLRequire %{SSL_CLIENT_S_DN_CN} in {"client.generic.dsp.dccinterface.co.uk", "theClient", "Jane Doe"}
+SSLRenegBufferSize 131072
+SSLOptions +StdEnvVars
+
+
+
+        </Directory>
+        <IfModule mod_ssl.c>
+            ErrorLog /var/log/apache2/ssl_engine.log
+            LogLevel debug
+          </IfModule>
+
+
+
+
+    # Servers to proxy the connection, or;
+    # List of application servers:
+    # Usage:
+    # ProxyPass / http://[IP Addr.]:[port]/
+    # ProxyPassReverse / http://[IP Addr.]:[port]/
+    # Example:
+    ProxyPass /securetest http://192.168.198.162:9999/
+    ProxyPassReverse / http://192.168.198.162:9999/
+
+    # Or, balance the load:
+    # ProxyPass / balancer://balancer_cluster_name
+
+
+</VirtualHost>
 #############
 EOF
 
