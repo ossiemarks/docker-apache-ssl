@@ -81,7 +81,7 @@ openssl ca -batch -config openssl.cnf -days 999 -in csr/client.csr -out certs/cl
 openssl pkcs12 -export -passout pass:qwerty -in certs/client.crt -inkey private/client.key -certfile certs/rootCA.crt -out certs/clientcert.p12 
 
 RUN  echo ">> Copying client certs to /var/"; \
-cp /u01/app/myCA/certs/rootCA.crt /u01/app/myCA/certs/clientcert.p12 /var/
+cp /u01/app/myCA/certs/rootCA.crt /u01/app/myCA/certs/clientcert.p12 /var/www/html/
 
 RUN chmod a+x /opt/entrypoint.sh
 
