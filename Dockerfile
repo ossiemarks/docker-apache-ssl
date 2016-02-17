@@ -62,8 +62,8 @@ cp /etc/openssl/openssl.cnf /u01/app/myCA/.
 
 WORKDIR /u01/app/myCA 
 
-RUN echo 06 > serial ;\
-echo 06 > crlnumber ;\
+RUN echo 16 > serial ;\
+echo 16 > crlnumber ;\
 touch index.txt
 
 
